@@ -15,7 +15,11 @@ environment:
   flutter: ">=3.29.0"
 
 dependencies:
-  alice: ^1.0.0
+  alice:
+    git:
+      url: https://github.com/thanhnt-mdev/alice.git
+      ref: feat/share-curl
+      path: packages/alice
   dio: ^5.8.0+1
   flutter:
     sdk: flutter

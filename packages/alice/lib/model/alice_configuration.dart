@@ -29,6 +29,9 @@ class AliceConfiguration with EquatableMixin {
   /// Flag used to show/hide share button
   final bool showShareButton;
 
+  /// Flag used to show/hide share curl button
+  final bool showShareCurlButton;
+
   /// Navigator key used to open inspector. Default value is null.
   final GlobalKey<NavigatorState>? navigatorKey;
 
@@ -44,6 +47,7 @@ class AliceConfiguration with EquatableMixin {
     this.notificationIcon = '@mipmap/ic_launcher',
     this.directionality,
     this.showShareButton = true,
+    this.showShareCurlButton = true,
     GlobalKey<NavigatorState>? navigatorKey,
     AliceStorage? storage,
     AliceLogger? logger,
@@ -59,6 +63,7 @@ class AliceConfiguration with EquatableMixin {
     String? notificationIcon,
     TextDirection? directionality,
     bool? showShareButton,
+    bool? showShareCurlButton,
     AliceStorage? aliceStorage,
     AliceLogger? aliceLogger,
   }) => AliceConfiguration(
@@ -67,6 +72,7 @@ class AliceConfiguration with EquatableMixin {
     notificationIcon: notificationIcon ?? this.notificationIcon,
     directionality: directionality ?? this.directionality,
     showShareButton: showShareButton ?? this.showShareButton,
+    showShareCurlButton: showShareCurlButton ?? this.showShareCurlButton,
     navigatorKey: navigatorKey ?? this.navigatorKey,
     storage: aliceStorage ?? this.aliceStorage,
     logger: aliceLogger ?? this.aliceLogger,
@@ -79,6 +85,7 @@ class AliceConfiguration with EquatableMixin {
     notificationIcon,
     directionality,
     showShareButton,
+    showShareCurlButton,
     navigatorKey,
     aliceStorage,
     aliceLogger,

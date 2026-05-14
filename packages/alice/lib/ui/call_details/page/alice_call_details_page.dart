@@ -33,6 +33,9 @@ class AliceCallDetailsPage extends StatefulWidget {
 /// State of call details page.
 class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
     with SingleTickerProviderStateMixin {
+  final GlobalKey _shareButtonKey = GlobalKey();
+  final GlobalKey _shareCurlButtonKey = GlobalKey();
+
   AliceHttpCall get call => widget.call;
 
   @override
@@ -75,18 +78,7 @@ class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
                       AliceCallErrorScreen(call: widget.call),
                     ],
                   ),
-                  floatingActionButton:
-                      widget.core.configuration.showShareButton
-                          ? FloatingActionButton(
-                            backgroundColor: AliceTheme.lightRed,
-                            key: const Key('share_key'),
-                            onPressed: _shareCall,
-                            child: const Icon(
-                              Icons.share,
-                              color: AliceTheme.white,
-                            ),
-                          )
-                          : null,
+                  floatingActionButton: _buildFab(),
                 ),
               );
             }
@@ -100,10 +92,76 @@ class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
     );
   }
 
+  Widget? _buildFab() {
+    final showShare = widget.core.configuration.showShareButton;
+    final showCurl = widget.core.configuration.showShareCurlButton;
+
+    if (!showShare && !showCurl) return null;
+
+    if (showShare && !showCurl) {
+      return FloatingActionButton(
+        backgroundColor: AliceTheme.lightRed,
+        key: _shareButtonKey,
+        onPressed: _shareCall,
+        child: const Icon(Icons.share, color: AliceTheme.white),
+      );
+    }
+
+    if (!showShare && showCurl) {
+      return FloatingActionButton(
+        backgroundColor: AliceTheme.lightRed,
+        key: _shareCurlButtonKey,
+        onPressed: _shareCurlCall,
+        child: const Icon(Icons.terminal, color: AliceTheme.white),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FloatingActionButton(
+          backgroundColor: AliceTheme.lightRed,
+          key: _shareCurlButtonKey,
+          heroTag: 'share_curl',
+          onPressed: _shareCurlCall,
+          child: const Icon(Icons.terminal, color: AliceTheme.white),
+        ),
+        const SizedBox(height: 8),
+        FloatingActionButton(
+          backgroundColor: AliceTheme.lightRed,
+          key: _shareButtonKey,
+          heroTag: 'share',
+          onPressed: _shareCall,
+          child: const Icon(Icons.share, color: AliceTheme.white),
+        ),
+      ],
+    );
+  }
+
   /// Called when share button has been pressed. It encodes the [widget.call]
   /// and tries to invoke system action to share it.
   void _shareCall() async {
-    await AliceExportHelper.shareCall(context: context, call: widget.call);
+    final RenderBox? box =
+        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final Rect? sharePositionOrigin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    await AliceExportHelper.shareCall(
+      context: context,
+      call: widget.call,
+      sharePositionOrigin: sharePositionOrigin,
+    );
+  }
+
+  void _shareCurlCall() async {
+    final RenderBox? box =
+        _shareCurlButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final Rect? sharePositionOrigin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    await AliceExportHelper.shareCurlCommand(
+      context: context,
+      call: widget.call,
+      sharePositionOrigin: sharePositionOrigin,
+    );
   }
 
   /// Get tab name based on [item] type.

@@ -6,6 +6,7 @@ import 'package:alice/model/alice_translation.dart';
 import 'package:alice/ui/call_details/widget/alice_call_list_row.dart';
 import 'package:alice/ui/common/alice_context_ext.dart';
 import 'package:alice/utils/alice_parser.dart';
+import 'package:alice/utils/curl.dart';
 import 'package:alice/ui/common/alice_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -114,6 +115,13 @@ class AliceCallRequestScreen extends StatelessWidget {
           value: queryParam.value.toString(),
         ),
     ]);
+
+    rows.add(
+      AliceCallListRow(
+        name: 'Curl ',
+        value: Curl.getCurlCommand(call),
+      ),
+    );
 
     return Container(
       padding: const EdgeInsets.all(6),
