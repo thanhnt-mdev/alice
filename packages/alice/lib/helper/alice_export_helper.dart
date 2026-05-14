@@ -26,6 +26,7 @@ class AliceExportHelper {
   static Future<AliceExportResult> shareCall({
     required BuildContext context,
     required AliceHttpCall call,
+    Rect? sharePositionOrigin,
   }) async {
     final callLog = await AliceExportHelper.buildFullCallLog(
       call: call,
@@ -43,10 +44,35 @@ class AliceExportHelper {
       ShareParams(
         text: callLog,
         subject: context.i18n(AliceTranslationKey.emailSubject),
+        sharePositionOrigin: sharePositionOrigin,
       ),
     );
 
     return AliceExportResult(success: true);
+  }
+
+  /// Shares curl command string for [call].
+  static Future<AliceExportResult> shareCurlCommand({
+    required BuildContext context,
+    required AliceHttpCall call,
+    Rect? sharePositionOrigin,
+  }) async {
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          text: Curl.getCurlCommand(call),
+          subject: context.i18n(AliceTranslationKey.emailSubject),
+          sharePositionOrigin: sharePositionOrigin,
+        ),
+      );
+      return AliceExportResult(success: true);
+    } catch (exception) {
+      AliceUtils.log(exception.toString());
+      return AliceExportResult(
+        success: false,
+        error: AliceExportResultError.logGenerate,
+      );
+    }
   }
 
   /// Format log based on [calls] and saves it to file.
